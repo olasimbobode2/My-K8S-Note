@@ -1,0 +1,2879 @@
+Containerization --> Docker, Rocket(Rkt)
+Container Orchestration Tools --> Docker Swarm, Kubernetes, OpenShift
+
+Installation
+============
+Self Managed K8s Cluster
+ minikube --> Single Node K8's Cluster.
+ Docker desktop --> Single Node K8's Cluster.
+ kubeadm --> We can setup multi node k8s cluster using kubeadm.
+
+Cloud Managed(Managed Services) = PaaS  
+   EKS --> Elastic Kubernetes Service(AWS)
+   AKS --> Azure Kubernetes Service(Azure)
+   GKE --> Google Kubernetes Engine(GCP)
+
+KOPS --> Is a Kubernetes Operations software use to create production ready
+highly available kubenetes services in Cloud like AWS.
+
+kubernetes = k8s  
+5/4/3 YEARS AGO WHEN YOU JOINED Domininion System
+=================================================
+1. Ticket0045
+  Create a self manged multi nodes [3 nodes] k8s cluster using kubeadm
+  1. Project requirements  
+  master = 34.205.72.48 / ubuntu / key29.pem 
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 172.31.94.134:6443 --token lwrjfy.880gx5rbyjdsc7oj \
+        --discovery-token-ca-cert-hash sha256:4cdc38203db66d5627ad1f0fb7b7d5c153ec78161efd67d78abe023e6357b740
+
+
+NameSpaces:
+  
+kubectl get namespaces ns
+kubectl create namespace <nameSpaceName> 
+kubectl create namespace <nameSpaceName>
+
+we can use namespaces for:
+   isolation, 
+   security and rbac, 
+   assign resources - 1GB RAM
+customer support [ Dev uat  prod  ]
+customers service [ Dev uat  prod  ]
+   Dev   
+   prod     
+   uat
+
+default  
+kube-system  
+kube-public 
+
+POD:
+==== 
+In k8s Containers run in pods 
+kubectl get pods     
+
+How can Containers be deployed in kubernetes?  
+How do you effect deployments in your environment using kubernetes?  
+docker container ls  or docker ps  
+docker ps -a  
+Workloads/jobs are effected/deployed/runned in kubernetes using kubernetes objects.
+Kubernetes Objects:
+POD
+   Deploy Sample Application
+==========================
+
+imperative method = using commands:
+   kubectl run hello --image=mylandmarktech/hello --port=80 
+   kubectl expose pod hello --port=80 --type=NodePort
+   Get Node Port details 
+   =====================
+   kubectl get services  
+
+Declarative method = using commands & yaml files = IaC:
+key: value  pairs  
+  name: simon
+  job: evangelist  
+list:
+  student:  
+  - simon 
+  - john 
+  - erica  
+dictionary:
+  student:
+    name: dominion 
+    age: 45 
+    wt: 200
+    ht: 1.8 
+
+kams: 
+
+kubectl api-resources   
+kubectl api-resources | grep pod    
+
+kind: Pod        = Key value pair 
+apiVersion: v1   = Key value pair 
+metadata:   = dictionary
+  name: webapp  
+  lables:
+    app: webapp
+spec:   = list  
+- containers:
+    - name: wp  
+      image: mylandmarktech/maven-web-app   
+      ports:
+      - containerPort: 8080   
+    - name: db 
+      image: mysql     
+
+- volumes 
+- nodeSelector 
+- imagePullSecrets   
+---
+Example: yaml or yml format
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    app:  myapp
+spec:
+  containers:
+  - name: myappcontainer
+    image: mylandmarktech/java-web-app
+    ports:
+    - containerPort: 8080
+
+KOPS: --> Is a Kubernetes Operations software use to create production ready
+highly available kubenetes services in Cloud like AWS.
+
+Docker volumes = rexray 
+  IAM  for authentication and authorisation
+  IAM authorise rexray docker plugin to manage EBS volumes in aws  .
+
+kops create cluster
+==================
+1. Kops software will fully provision a control-plane/masterNode  
+2. Kops software will fully provision a nodeGroups [worker nodes]
+3. kops will create and/or Managed other aws resources
+    VPC, ASG & LC/LT / ELB (Load Balancers ) 
+3. We have to authorise kops to manage other AWS services via IAM         
+
+https://github.com/LandmakTechnology/kops-k8s
+
+master = 18.222.139.125  
+  node1 18.223.133.75
+  node2 18.117.111.155 
+
+Imperative  approach = commands 
+Declarative approach = COMMANDS AND yaml files  
+
+Yaml / yml :
+============
+keys and value:
+  name: simon  
+dictionary:
+  name: paul 
+  class : 25 
+  jobs: 25 
+  salary: 600k  
+list:
+ - name: obi 
+   profession: President
+ - name: jagabang 
+   profession: business 
+ - name: atiku
+   profession: business   
+===============================
+kams = == 
+=# single Container POD
+kind: Pod  
+apiVersion: v1    
+metadata:
+  name: webapp 
+  namespace: dev   
+  labels:  
+    app: webapp  
+spec:
+  containers:
+  - name: web
+    image: mylandmarktech/java-web-app  
+    ports:
+    - containerPort: 8080     
+---
+kubectl apply -f <fileName.yml>
+kubectl apply -f directory/
+kubectl create -f directory/
+kubectl get all 
+kubectl get pods 
+kubectl get pods --show-labels
+kubectl get pods - o wide
+kubectl get pods - o wide --show-labels
+kubectl  describe pod <podName>
+kubectl  describe pod <podName> -n <namespace>
+
+
+kubectl config set-context --current --namespace=dev
+
+
+=# Multi Container POD
+apiVersion: v1
+kind: Pod
+metadata:
+  name:  <PODName>
+  namespace: <nameSpaceName>
+  labels:
+    <labelKey>: <labelValue> 
+spec:
+  containers:
+  - name: <nameOftheCotnainer>
+    image: <imageName>
+  ports:
+  - containerPort: <portNumberOfContainer>
+  - name: <nameOftheCotnainer>
+    image: <imageName>
+    ports:
+    - containerPort: <portNumberOfContainer>        
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  selector:
+    app: myapp
+  ports:
+  - port: <Port>
+    targetPort: <Target Port>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webappsvc
+spec:
+  selector:
+    app: webapp
+  ports:
+  - port: 80
+    targetPort: 8080
+
+# labels  and selectors
+# key:value pair
+# service discovery
+dev  namespace/ENV  
+UAT namespace/env 
+prod namespace/env  
+
+k8s Service / Service Discovery:
+    ClusterIP  = default kubernetes service type  
+                 use for communication within the cluster  
+                 This is the most secured service Type  
+    NodePort  = is use to receive external traffic/communication in the cluster
+    LoadBalancer = is use to receive external traffic/communication in the cluster
+
+NB: All service types in kubernetes performs Load Balancing
+    Service does dns resolution for pods  
+
+=# labels are key valuepairs which we can attach to any k8 object
+Service
+========
+apiVersion: v1
+kind: Service
+metadata:
+  name: <serviceName>
+  namespace: <nameSpace>
+spec:
+  type: <ClusterIP/NodePort>
+  selector:
+     <key>: <value>
+  ports:
+  - port: <servciePort> # default It to 80
+    targetPort: <containerPort> 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webappsvc  
+spec:
+  type: NodePort  # ClusterIP 
+  selector:
+    app: webapp
+  ports: 
+  - port: 80 
+  - targetPort: 8080     
+  - nodePort: 30900 #    30000-32767 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webappsvc  
+spec:
+  type: LoadBalancer  # ClusterIP 
+  selector:
+    app: webapp
+  ports: 
+  - port: 80 
+  - targetPort: 8080     
+  - nodePort: 30900 #    30000-32767 
+
+ClusterIP 
+NodePort  
+LoadBalancer 
+ExternalName
+
+
+master = 18.222.139.125  
+  node1 18.223.133.75
+  node2 18.117.111.155 
+
+  Heach check if Application is running:
+    curl -v ClusterIP address 
+    curl -v nodeIP:nodePort  
+    curl -v 18.117.111.155:30900 
+---
+Kubernetes Objects:
+1. POD = We cannot scale using POD as a kubernetes objects  
+Contoller managers:
+  2. Replication Controller
+  3. Replica Set
+  4. DaemonSet
+  5. Deployment
+
+Service
+Volume
+
+Pods
+SingleContainerPods
+Most of the time we will go with SingleContainerPods
+
+kubeadm  = 5 years  
+  kops / eks /aks  
+
+
+BootCamp:
+  Tuesdays = 7pm - 11pm  = 3 weeks  
+
+Morning Devotion is deployed from the 3rd week   
+   Mon/Wed/Thu/Fri  = 6am - 8am  = Prof Ken 
+   Mon/Tus/Wed/Thu/Fri  = 6am - 8am  = Prof Ken 
+
+Note: If we don't mention -n <namespace> it will refer default namespace.
+If required we can change namespace context.  
+
+
+=# ReplicationController = rc   
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: <RRName>
+  labels: # Labels for RR
+    <key>: <value>
+spec:
+  replicas: <NoOfPodReplicas> 5
+  selector: # ReplicationController will fine pod based on the below key and value
+    <key>: <value>
+  
+  template:  =#Pod metadata
+    metadata: #Pod metadata
+      name: <PodName>
+      labels: # Pod labels
+      <key>: <value>
+  spec:
+    containers:
+    - name: <containerName>
+      image: <imagaName>
+    ports:
+    - containerPort: <containerPort>
+---
+apiVersion: v1
+kind: ReplicationController 
+metadata:
+  name: apprc  
+  labels:
+    app: fe
+spec:
+  replicas: 2   
+  selector:  
+    app: webapp
+  template: 
+    metadata:
+      name: myapp    
+      labels: 
+        app: webapp      
+    spec: 
+      containers:
+      - name: myapp  
+        image: mylandmarktech/hello
+        ports:
+        - containerPort: 80       
+---
+apiVersion: v1  
+kind: Service 
+metadata:
+  name: appsvc
+spec:
+  type: NodePort  
+  selector:  
+    app: webapp
+  ports:
+  - port: 80 
+    targetPort: 80
+    nodePort: 31000
+
+kubectl get rc/svc/all/pod  
+kubectl get rc/svc/all/pod  -o wide  
+kubectl get rc/svc/all/pod  -o yaml  
+
+kubectl scale rc apprc --replicas 3
+
+ubuntu@master:~$ kubectl get rc
+NAME    DESIRED   CURRENT   READY   AGE
+apprc   3         3         3       11m
+apprc   30        10        8       11m
+
+  pod running VS pod that should be running   
+    insufficient resources
+
+IQ: What is the difference b/w docker svc and k8s svc?
+In Docker Swarm service manages the containers. 
+we can access containers using serviceName in Docker.
+
+in k8s service is not creating/managing the pod. 
+controllers manage the PODS 
+sERVICE IS USE TO DISCOVER THE PODS - Service Discovery   
+
+
+ReplicaSet: rs  
+
+What is difference b/w replicaset and replication controller?
+
+ReplicaSet is the next generation of replication controller. 
+Both manages the pod replicas. The only difference as at now is
+selector support.
+
+RC --> Supports only equality based selectors.
+
+key == value(Equal Condition)
+selector:
+  app: webapp
+  app: fe  
+
+RS --> Supports eqaulity based selectors and also supports  set based selectors.
+  Equality Based:
+    selector:
+      matchLabels:
+        key: value 
+        app: fe      
+
+  Set based selectors.:
+    matchExpressions: # Set Based
+    - key: app
+      operator: IN
+      values:
+      - webapp
+      - webapplication
+      - webs
+---
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: <RSName>
+spec:
+  replicas: <noOfPODReplicas>
+  selector:  # To Match POD Labels.
+    matchLabels:  # Equality Based Selector
+    <key>: <value>
+    matchExpressions:  # Set Based Selector 
+  - key: <key>
+    operator: <in/not in>
+    values:
+    - <value1>
+    - <value2>
+  template:
+    metadata:
+    name: <PODName>
+    labels:
+      <key>: <value>
+  spec:
+  - containers:
+    - name: <nameOfTheContainer>
+      image: <imageName>
+    ports:
+    - containerPort: <containerPort>
+
+---
+apiVersion: apps/v1    
+kind: ReplicaSet    
+metadata:
+  name: myrs    
+spec:
+  replicas: 2   
+  selector:
+    matchLabels:
+      app: be   
+  template:
+    metadata:
+      name: wp   
+      labels:
+        app: be  
+    spec: 
+      containers:
+      - name: myapp    
+        image: mylandmarktech/java-web-app   
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind : Service
+metadata :
+  name: websvc
+spec:
+  type: NodePort
+  selector:
+    app: be
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 32000
+
+
+kubectl get rs 
+kubectl get rs -n <namespace>
+kubectl get all
+kubectl scale rs <rsName> --replicas <noOfReplicas>
+
+kubectl describe rs <rsName>
+kubectl delete rs <rsName>
+
+What is difference b/w kubectl create and kubectl apply ?
+
+Create will Create an Object if it's not already created. 
+Apply will perform create if object is not created earlier.
+If it's already created apply will update.
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: <DSName>
+spec:
+  selector:  # To Match POD Labels.
+    matchLabels:  # Equality Based Selector
+    <key>: <value>
+    matchExpressions:  # Set Based Selector 
+  - key: <key>
+    operator: <in/not in>
+    values:
+    - <value1>
+    - <value2>
+  template:
+    metadata:
+    name: <PODName>
+    labels:
+      <key>: <value>
+  spec:
+  - containers:
+    - name: <nameOfTheContainer>
+      image: <imageName>
+    ports:
+    - containerPort: <containerPort>
+
+=# splunk  or ELK OR KubeProxy // network plugin -  weave 
+apiVersion: apps/v1
+kind: DaemonSet
+metadata: 
+  name: webappds
+spec: 
+  selector: 
+    matchLabels: 
+      app: webapp
+  template: 
+    metadata: 
+    name: webapppod
+      labels: 
+        app: webapp
+    spec:
+      containers:
+      - name: webappcontainer
+        image: tutum/hello-world
+        ports:
+        - containerPort: 80
+
+prometheus/Grafana = NodeExporters / 
+EFK = Filebeat    
+
+14 node in our cluster 
+DaemonSet = DS schedule a POD in each Node/targetNode/nodeGroup   
+
+kubectl get ds 
+kubectl get ds -n <namespace>
+kubectl get all
+
+
+kubectl describe ds <dsName>
+kubectl delete ds <dsName>
+
+===
+  Replica mode = default (RS/RC)
+DaemonSet = = 
+   Global mode in Docker-Swarm deployment 
+we have 15 worker nodes in our Kubernetes cluster.
+  We want to deploy a monitoring agent to monitore the nodes  
+  Which kubernetes object should we used?? 
+
+Answer: DaemonSet 
+
+========
+If we have 12 nodes in the cluster 
+  Then Workloads deploy via DaemonSet will assign a pod in each node or the nodeGroup
+ nodeGroup 1 has 4 db-nodes  
+ nodeGroup 2 has 4 app-nodes  
+ nodeGroup 3 has 4 web-nodes  
+    We can Node affinity or node selector 
+
+Good for deploying:
+    monitoring tools 
+    log management tools 
+Use cases of global-mode: 
+Use cases of DaemonSet:
+  EFK  = 
+  Elastic search 
+  FileBeat - DaemonSet 
+     Gather the logs from the nodes 
+     All the node should have a FileBeat agent running 
+  Kibana 
+    11 Nodes running in your cluster 
+
+Prometheus and Grafana:
+  NodeExporters  -- DaemonSet
+     Gather the logs in all the nodes 
+
+  Prometheus server 
+  kube-state-metrics 
+  alertManager 
+  Prometheus-UI 
+----   
+    
+what is difference b/w kubectl apply & kubectl create
+
+kubectl apply (create & update)
+
+kubectl create -f <fileName.yml>
+
+kubectl update -f <fileName.yml>
+
+
+kubernetes objects:
+  POD
+  Replication Controller
+  Replica Set
+  DaemonSet
+  Deployment
+  Service
+  Volume
+deployment:
+===========
+
+
+How have you deployed applications/workloads in Kubernetes?
+1. Pods, ReplicationController, ReplicaSet, DaemonSet, 
+2. Deployment is the recommended kubernetes object to
+      1. run workloads in k8s
+      2. Deploy applications in Kubernetes
+
+Deployments:
+Kubernetes object "Deployment" is use to deploy  applications/PODs :
+  What is your deployment strategy: 
+    In kubernetes the default Deployment strategy 
+        RollingUpdates 
+        Recreate 
+        blue/green 
+        canary 
+The apiVersion =  apps/v1 supports equality and set-based selectors 
+IQ:     What is the default Deployment strategy in Kubernetes? 
+answer: RollingUpdates
+
+kubectl api-resources | grep deployment    
+deploy.yml  
+
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: webapp  
+  namespace: facebook    
+  labels:
+    tier: fe  
+spec:
+  strategy:   
+  replicas:   
+  selector:  
+  template:
+---
+ReplicationController apiVersion is: v1  
+    selector: 
+       app: webapp
+Deployments, ReplicaSet, DaemonSet apiVersion = apps/v1
+      selector: 
+        matchLabels: 
+          app: webapp
+      selector: 
+
+  selector: 
+    matchExpressions:  # Set Based Selector 
+  - key: <key>
+    operator: <in/not in>
+    values:
+    - <value1>
+    - <value2>
+
+
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: webapp  
+  namespace: facebook    
+  labels:
+    tier: fe  
+spec:
+  selector: 
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      name: webapp
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: springapp 
+        image: mylandmarktech/spring-boot-mongo  
+        ports: 
+        - containerPort: 8080 
+        env:
+        - name: MONGO_DB_USERNAME  
+          value: devdb   
+        - name: MONGO_DB_PASSWORD 
+          value: devdb@123  
+        - name: MONGO_DB_HOSTNAME
+          value: mongo     
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fcappsvc
+  namespace: facebook
+spec:
+  type: NodePort
+  selector:
+    app: webapp
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 31500  #30000-32767
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  selector:
+    matchLabels:
+      app: mavenapp
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  minReadySeconds: 30
+  replicas: 4
+  template:
+    metadata:
+      name: mavenapppod
+      labels:
+        app: mavenapp
+    spec:
+      containers:
+      - name: mavenappcontainer
+        image: legah2045/maven-web-app
+        ports:
+        - containerPort: 8080
+
+
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: app-svc 
+spec: 
+  selector: 
+    app: mavenapp
+  type: NodePort
+  ports:
+  - targetPort: 8080   
+    port: 80
+    nodePort: 32700  
+
+
+https://github.com/LandmakTechnology/kubernetes-notes
+https://github.com/LandmakTechnology/kubernetes-manifests
+
+kubectl rollout deployment    
+kubectl rollout undo deployment 
+kubectl rollout undo deployment myapp
+
+
+Rollback Deployment to Specific Revision
+kubectl rollout undo deployment/my-first-deployment --to-revision=3
+kubectl rollout undo deployment/myapp --to-revision=2    
+
+kubectl exec myapp-97dfdf5c9-8ng8c ls webapps
+
+Zero downtime is achieve USING RollingUpdates strategy to deploy in Kubernetes.
+  original 
+  previous 
+  verions 1, 2, 3, 4, 5 
+
+strategy:
+   Recreate:
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: hello 
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: hello
+  replicas: 2  
+  template: 
+    metadata: 
+      name: hello
+      labels:
+        app: hello
+    spec:
+      containers: 
+        - name: hello
+          image: mylandmarktech/hello:1   
+          ports: 
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-svc
+spec:
+  type: NodePort
+  selector:
+    app: hello
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 32000
+
+kubectl rollout history deployment hello  
+
+RollingUpdates 
+Recreate 
+Blue/Green : 
+    VERSION1=BLUE RUNNING IN production with 4 replicas 
+
+    VERSION2=GREEN is deployed in a test/uat/ environment with 4 replicas [full capacity]
+
+    VERSION2=GREEN will be switch to RUN IN production after testing  
+
+Some deployments can last for over 8 hours.
+
+
+blue.yml 
+=======
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: hello 
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: hello
+  replicas: 2  
+  template: 
+    metadata: 
+      name: hello
+      labels:
+        app: hello
+    spec:
+      containers: 
+        - name: hello
+          image: mylandmarktech/hello:3  
+          ports: 
+          - containerPort: 80
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: green 
+spec:
+  selector:
+    matchLabels:
+      app: green
+  replicas: 2  
+  template: 
+    metadata: 
+      name: green
+      labels:
+        app: green
+    spec:
+      containers: 
+        - name: hello
+          image: mylandmarktech/hello:4   
+          ports: 
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: green
+spec:
+  type: NodePort
+  selector:
+    app: green
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 32200
+---
+
+Canary:
+  Facebook is running version 31 of her application 
+  Facebook is about to release version 32  
+
+
+How long did we perform testing to conclude that the applications   
+were free from bugs and vulberablity with Blue/Green   
+
+Canary:
+Traffic management :
+  Facebook  
+    CHILDREN 12-17
+    YOUTHS
+    ADULTS
+    SENIORS 
+
+    AFRICA   
+    EUROPE 
+    AMERICAS 
+    ASIA 
+
+
+  NIH --- >       
+  CDC --- > 
+
+    AFRICA   
+    EUROPE 
+    AMERICAS 
+    ASIA 
+Deployments:
+advance:
+   Volumes -- NFS  
+   configMaps, Secrets, 
+   Nginx-Ingress
+   helm  ---    
+   haProxy 
+   EKS/kops   
+   auto SCALING: HPA, VPA, CAS, 
+     kubectl scale deploy 
+   APM: prometheus and Grafana  
+   Log mgt: EFK/ELK  
+   Kubernetes security  
+
+Ansible  
+Bootcamp  = September 1, 2022 
+
+Volumes:
+Kubernetes Supports different types of volumes.
+hostPath
+nfs
+awsElasticBlockStore
+googlePersistantdisk
+azureFile
+azuredisk
+persistantVolume
+persistantVolumeClaim
+
+---
+sringboot -app     = STATELESS Application  
+database  -mongoDB = STATEFULL Application  
+
+cluster(nodes(pods(containers))) 
+--- stop | restart 
+https://github.com/LandmakTechnology/spring-boot-docker 
+https://hub.docker.com/repository/docker/mylandmarktech/spring-boot-mongo
+https://hub.docker.com/_/mongo
+
+=##Spring Boot App
+Deployment is done using a kubernetes object
+  v1 ---> v2 with downtime
+ RS cannot Rollback v2 ---> v1  
+kubectl api-resources
+====================== 
+apiVersion: apps/v1     
+kind: Deployment         
+metadata: 
+  name: myapp
+  labels:
+    app: fe
+spec: 
+  replicas: 2  
+  selector:
+    matchLabels:
+      app: tesla
+  template:
+    metadata:
+      name: app  
+      labels:
+        app: tesla
+    spec:
+      containers:
+      - name: springapp 
+        image: mylandmarktech/spring-boot-mongo  
+        ports:
+        - containerPort: 8080  
+        env:
+        - name: MONGO_DB_USERNAME
+          value: devdb    
+        - name: MONGO_DB_PASSWORDD   
+          value: devdb@123 
+        - name: MONGO_DB_HOSTNAME
+          value: mongo 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springapp
+spec:
+  selector:
+    app: tesla
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 30000
+  type: NodePort
+
+
+
+
+
+    mongodb:
+      host: ${MONGO_DB_HOSTNAME}
+      port: 27017
+      username: ${MONGO_DB_USERNAME}
+      password: ${MONGO_DB_PASSWORD}
+springapp code is written by LSS  
+    V1 V2 V3 V4 V5 
+
+mongoDB app is not supported by LSS 
+
+=##mongo
+apiVersion: apps/v1 
+kind: ReplicaSet
+metadata:
+  name: mongo  
+spec:
+  selector:
+    matchLabels:
+      app: db  
+  template:
+    metadata:
+      name: mongo   
+      labels:
+        app: db   
+    spec:
+      volumes:
+      - name: hostpathvol  
+        hostPath:
+          path: /tmp/mydata 
+      containers:
+      - name: mongdb   
+        image: mongo    
+        ports:
+        - containerPort: 27017    
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: devdb    
+        - name: MONGO_INITDB_ROOT_PASSWORD   
+          value: devdb@123 
+        volumeMounts:
+        - name: hostpathvol
+          mountPath: /data/db  
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: db
+  ports:
+  - port: 27017
+    targetPort: 27017
+# Mongo db pod with volumes(HostPath)
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mongodbrs
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+     metadata:
+       name: mongodbpod
+       labels:
+         app: mongodb
+     spec:
+       volumes:
+       - name: hostpathvol
+         hostPath:
+           path: /tmp/mongodbbkp      
+       containers:
+       - name: mongodbcontainer
+         image: mongo
+         ports:
+         - containerPort: 27017
+         env:
+         - name: MONGO_INITDB_ROOT_USERNAME
+           value: devdb
+         - name: MONGO_INITDB_ROOT_PASSWORD
+           value: devdb@123
+         volumeMounts:
+         - name: hostpathvol
+           mountPath: /data/db  
+
+
+
+Environment:
+      MONGO_INITDB_ROOT_USERNAME:  devdb
+      MONGO_INITDB_ROOT_PASSWORD:  devdb@123 
+
+
+Environment:
+      MONGO_DB_USERNAME:   devdb
+      MONGO_DB_PASSWORDD:  devdb@123
+      MONGO_DB_HOSTNAME:   mongo
+
+    mongodb:
+      host: ${MONGO_DB_HOSTNAME}
+      port: 27017
+      username: ${MONGO_DB_USERNAME}
+      password: ${MONGO_DB_PASSWORD}
+
+=# Mongo DB Controller With NFS Volume
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mongodbrs
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+     metadata:
+       name: mongodbpod
+       labels:
+         app: mongodb
+     spec:
+       volumes:
+       - name: mongodbvolume
+         nfs:
+           server: <NFSServerIP>  
+           path: /mnt/share
+       containers:
+       - name: mongodbcontainer
+         image: mongo
+         ports:
+         - containerPort: 27017
+         env:
+         - name: MONGO_INITDB_ROOT_USERNAME
+           value: devdb
+         - name: MONGO_INITDB_ROOT_PASSWORD
+           value: devdb@123
+         volumeMounts:
+         - name: mongodbvolume
+           mountPath: /data/db
+---
+
+So far we have directly mounted our volume with pod using hostPath and NFS.
+Such volumes depends on the pod lifecycle.
+This approach is like bindmount in docker and doesn't persist data. 
+
+PV --> It's a piece of storage(hostPath,nfs,ebs,azurefile,azuredisk) in a k8s cluster. 
+       PV exists independently from from pod life cycle which is consuming.
+
+Persistent Volumes are provisioned in two ways, manually or Dynamically.
+
+1) Static Volumes (Manual Provisionging)
+    As a k8's Administrator will create a PV manullay so that pv's can be avilable for PODS which requires.
+  Create a PVC so that PVC will be attached PV. We can use PVC with PODS to get an access to PV. 
+  
+2) Dynamic Volumes (Dynamic Provisioning)
+     It's possible to have k8's provsion(Create) volumes(PV) as required. 
+     Provided we have configured storageClass.
+   So when we create PVC if PV is not available Storage Class will Create PV dynamically.
+   
+  kubeadm = we mostly manually provision persistantVolume   
+  kops/eks/aks
+
+PVC = persistantVolumeClaim
+If pod requires access to storage(PV),it will get an access using PVC.
+ PVC will be attached to PV.
+
+
+PersistentVolume – the low level representation of a storage volume.
+PersistentVolumeClaim – the binding between a Pod and PersistentVolume.
+Pod – a running container that will consume a PersistentVolume.
+StorageClass – allows for dynamic provisioning of PersistentVolumes.
+
+
+PV Will have Access Modes as follows:
+ReadWriteOnce – the volume can be mounted as read-write by a single node   hostPath   
+ReadOnlyMany – the volume can be mounted read-only by many nodes           NFS 
+ReadWriteMany – the volume can be mounted as read-write by many nodes      NFS  
+
+In the CLI, the access modes are abbreviated to:
+
+RWO - ReadWriteOnce
+ROX - ReadOnlyMany
+RWX - ReadWriteMany
+
+Claim Policies:
+A Persistent Volume can have several different claim policies associated with it including
+
+Retain: When the claim is deleted, the volume remains.
+Recycle: When the claim is deleted the volume remains but in a state where the data can be manually recovered.
+Delete: The persistent volume is deleted when the claim is deleted.
+The claim policy (associated at the PV and not the PVC) 
+    is responsible for what happens to the data on when the claim has been deleted.
+
+
+kubernetes-manifests:
+  https://github.com/LandmakTechnology/kubernetes-manifests
+  https://github.com/LandmakTechnology/kubernetes-notes
+
+Commands
+
+kubectl get pv
+kubectl get pvc
+kubectl get storageclass
+kubectl describe pvc <pvcName>
+kubectl describe pv <pvName>
+
+
+Find Sample PV & PVC Yml from below Git Hub
+
+
+kubectl
+
+=# Complete Manifest Where in single yml we defined Deployment & Service for SpringApp &
+=#PVC(with default  StorageClass),ReplicaSet/StatefulSet & Service For Mongo.
+=# storage class, pv, pvc, 
+=# configMaps / Secretes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springapp
+  template:
+    metadata:
+      name: springapppod
+      labels:
+        app: springapp
+    spec:
+      containers:
+      - name: springappcontainer
+        image: mylandmarktech/spring-boot-mongo
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_DB_USERNAME
+          value: devdb
+        - name: MONGO_DB_PASSWORD
+          value: devdb@123
+        - name: MONGO_DB_HOSTNAME
+          value: mongo 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springapp
+spec:
+  selector:
+    app: springapp
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 30030
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodbpvc 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 16Gi
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+     metadata:
+       name: mongodbpod
+       labels:
+         app: mongodb
+     spec:
+       volumes:
+       - name: pvc
+         persistentVolumeClaim:
+           claimName: mongodbpvc     
+       containers:
+       - name: mongodbcontainer
+         image: mongo
+         ports:
+         - containerPort: 27017
+         env:
+         - name: MONGO_INITDB_ROOT_USERNAME
+           value: devdb
+         - name: MONGO_INITDB_ROOT_PASSWORD
+           value: devdb@123
+         volumeMounts:
+         - name: pvc
+           mountPath: /data/db   
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+
+
+a4e0df0fe996a4feb8b4c36924c1ab23-455473050.us-east-2.elb.amazonaws.com
+
+CREATE a records using DNS service in aws [Route53]
+
+myapp.com  --- 
+
+Name:
+  springapp.dominionapps.net
+type: A records
+
+value:  
+ a4e0df0fe996a4feb8b4c36924c1ab23-455473050.us-east-2.elb.amazonaws.com
+
+volumes concepts in kubernetes:
+==============================
+kubernetes supports:
+  hostPath 
+  NFS/EFS 
+    DATA lifecycle depends on the PODS lifecycle     
+  Persistent Volume = PV IS Managed by the .kube service  
+  PV / PVC / SC  
+    hostPath 
+    NFS/EFS
+    awsBlockStore 
+    azureDisk  
+
+mongodb:
+      host: ${MONGO_DB_HOSTNAME}
+      port: 27017
+      username: ${MONGO_DB_USERNAME}
+      password: ${MONGO_DB_PASSWORD}
+
+
+code smells 
+    mongodb:
+      host: db
+      port: 27017
+      username: devdb
+      password: admin@1234  
+   
+            dev     qa       uat       prod  
+hostname    mongo   mongodb   db        mydb  
+username  devdb     qadb     watdb     proddb  
+password  dev123    qa234    uat124    prod987
+
+cluster :
+  10 applications:
+        userMGT / CustomerService / moneyTransfer /      
+
+Tesla  ---- BOA =    
+
+Workload deployment in kubenetes is done using
+   kubernetes objects:
+deployment is the recommended Kubernetes object used to 
+deploy stateless applications in Kubernetes in our ENVs
+
+we use ReplicaSet  in our environment to deploy 
+STATEFULL Application including PV/PVC & storageclasses
+
+StatefulSet is the recommended Kubernetes object used to 
+deploy statefull applications in Kubernetes in our ENVs 
+
+NodeJS web application
+======================
+https://github.com/LandmakTechnology/nodejs-application
+DockerHub = mylandmarktech/nodejs-fe-app
+  docker build -t mylandmarktech/nodejs-fe-app:28 . 
+---
+apiVersion: v1
+kind: Pod  
+metadata:
+  name: nodeapp   
+  labels:
+    app: node  
+spec:
+  containers: 
+  - name: node  
+    image: mylandmarktech/nodejs-fe-app:28 
+    ports: 
+    - containerPort: 9981  
+  imagePullSecrets:
+    - name: dockerhubcred
+  volumes:  
+  podAffinity:   
+---
+apiVersion: v1 
+kind: Service  
+metadata:  
+  name: nodesvc
+spec:
+  type: NodePort  
+  selector:
+    app: node  
+  ports:
+  - port: 80  
+    targetPort: 9981  
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: private-reg
+spec:
+  containers:
+  - name: private-reg-container
+    image: <your-private-image>
+  imagePullSecrets:
+  - name: regcred
+
+Dockerfile 
+FROM   nginx      
+EXPOSE 80  
+
+Troubleshootings PODS not running:
+  kubectl get/describe/logs/exec/ 
+
+pulling docker iamges from private repository/registry requires authentication
+  username and password/token  
+ private image registry:
+    dockerhub 
+    ECR  
+    nexus/JFrog
+
+kubectl create secret docker-registry dockerhubcred \
+    --docker-server=docker.io --docker-username=mylandmarktech \
+    --docker-password=Mercy000014
+
+
+RestfulAPIs  
+ http:
+  get/post/delete/ Request : 
+  http://13.59.8.163:31500/  
+  http://13.59.8.163:31500/landmarktechnologies
+  http://13.59.8.163:31500/jsonData
+
+app.js:
+  HTTP GET REQUEST:
+    http://18.119.143.159:31000/landmarktechnologies
+    18.119.143.159:31000/landmarktechnologies
+    18.119.143.159:31000/jsonData
+    18.119.143.159:31000/html 
+    18.119.143.159:31000/queryparam
+    18.119.143.159:31000/queryparam
+    18.119.143.159:31000/redirect
+
+curl -v 18.119.143.159:31000/landmarktechnologies
+
+ 9981
+
+Secret and configMaps
+=====================
+Qualities of a code software/codes
+==================================
+1. portable
+   Environment variables   
+
+configMaps =  
+   1. Are used to store data in key value form  [database: hostname: devdb] 
+   2. generally stores  non confidencial data in kubenetes [hostname, username] 
+   3. Data is store in clear text  
+   4. It captures configurations that weren't hardcoded in the dockerfile or by developers 
+
+Secrets = 
+   1. Are used to store data in key value form  [database: hostname: devdb] 
+   2. generally stores confidencial data in kubenetes [passwords, ssh-keys, tokens] 
+   3. Data is store in encrypted form   
+
+Developers as a best practice should write:
+  portable codes
+  The shouldn't hard code
+  Dockerfile 
+    db-username: admin  
+  Dockerfile1 
+    db-username: ${username}
+    db-hostname: ${hostname}
+    db-password: ${password}   
+
+Container Orchestration:
+    containers      images                             object:
+1.   mongodb        mongo                              RS/RC/SS  
+2.   springapp      mylandmarktech/spring-boot-mongo   Deployment  
+
+Environments       Dev     stage        prod           : object
+hostname            mongo   mongo2       mongdb          configMaps
+username            devdb   stagedb      admindb         configMaps
+password          devdb@123    admin      admin@123      secrets/configMaps 
+
+Kubernetes Objects needed To deploy mongo database container:
+  ReplicaSet, PVC,  PV, configMaps and Secrets and database ClusterIP service 
+
+configmap.yml
+=============  
+apiVersion: v1    
+kind: configMap  
+metadata:
+  name: mongo-configmap     
+data:  
+  db-username: uatdb   
+  db-hostname: mongodb  
+  db-password: uatdb@123   
+
+secret.yml
+=========
+apiVersion: v1 
+kind: Secret
+metadata:
+  name: mongodb-password    
+Opaque:
+data:
+  db-password: dWF0ZGJAMTIz  
+#echo -n 'uatdb@123' | base64
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springapp
+  template:
+    metadata:
+      name: springapppod
+      labels:
+        app: springapp
+    spec:
+      containers:
+      - name: springappcontainer
+        image: mylandmarktech/spring-boot-mongo
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-configmap
+              key: db-username
+        - name: MONGO_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-password
+              key: db-password
+        - name: MONGO_DB_HOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-configmap
+              key: db-hostname
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+     metadata:
+       name: mongodbpod
+       labels:
+         app: mongodb
+     spec:
+       volumes:
+       - name: pvc
+         persistentVolumeClaim:
+           claimName: mongodbpvc
+       containers:
+       - name: mongodbcontainer
+         image: mongo
+         ports:
+         - containerPort: 27017
+         env:
+         - name: MONGO_INITDB_ROOT_USERNAME
+           valueFrom:
+             configMapKeyRef:
+               name: mongo-configmap
+               key: db-username
+         - name: MONGO_INITDB_ROOT_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: mongodb-password
+               key: db-password
+         volumeMounts:
+         - name: pvc
+           mountPath: /data/db
+
+ CreateContainerConfigError in Kubernetes??
+ ==========================================
+
+   200 lines  
+apiVersion: v1  
+kind  : Pod
+metadata:
+  name: app    
+spec:
+  containers:
+  - name: hello  
+    image: mylandmarktech/hello  
+    ports:
+    - containerPort: 8080      
+    resources:
+      requests:
+        cpu: "500Mi" 
+        mem: "200Mi"  
+    limits:
+      cpu: "800Mi" 
+      mem: "400Mi"    
+resources  
+ResourceQuota:  
+auto scaling=  HPA / VPA  / CAS  
+
+13 nodes = CPU=100000MB  MEM= 40000MB  
+80% 13 nodes = CPU=80000MB  MEM= 32000MB  
+        CPU       MEM  
+PODS = 100 PODS / 80PODS    
+
+ HPA:
+  min: 40  
+  max: 70    
+
+kubernetes operator called = metric server  
+   50 : 60 
+
+Helm 
+   helm create   
+Nginx-ingress
+
+prometheus and Grafana  
+EFK    
+Kubernetes security    
+
+
+Monday  
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-configmap
+data:
+    | <tomcatuser></tomcatuser>  
+
+
+expiring on Nov 29, 2022  
+========================
+
+Landmark MU:  
+
+
+  Linkedin  =      
+    James Ericson    
+    Paul Eric  
+
+James Paul Ericson  
+
+20
+=============================================================
+Kubernetes 10 VIDEO  - August 14, 2022 
+Health Check and auto scaling  
+=====================================
+https://landmarkmetropolitanuniversity.zoom.us/rec/share/U8su-N4ZtLe7RNLa99_t2M079By25EEE1uFg76Rza6iBUz92cZF5C1OZNYt45e8.KkVpFsHY25a3PZzX
+
+Running notes for Probes and auto scaling
+==========================================
+Running health check in applications:
+=====================================
+ --- Probes are used to run health check in kubenetes   
+
+ubuntu@ip-172-20-50-57:~$ kubectl get deploy -o wide
+NAME      CONTAINERS           IMAGES                             SELECTOR
+app     springappcontainer   mylandmarktech/spring-boot-mongo   Dockerfile
+myapp   myapp                mylandmarktech/maven-web-app       Dockerfile
+---
+FROM  tomcat:jdk16    
+COPY  target/*war /usr/local/tomcat/maven-web-app.war    
+EXPOSE 8080
+CMD ['catalina.sh', 'run']
+
+The process  
+The application  
+
+1. kubernetes performs health check by default.  
+2. curl -v 45.5.100.5:31000 
+
+ReplicaSet, ReplicationController
+==================================
+kind: Deployment
+apiVersion: apps/v1  
+metadata:
+  name: myapp 
+spec:
+  selector: 
+    matchLabels:
+      app: myapp
+  replicas: 2 
+  template:
+    metadata:
+      name: myapp    
+      labels:
+        app: myapp        
+    spec:
+      containers:
+      - name: myapp 
+        image: mylandmarktech/maven-web-app 
+        ports:
+        - containerPort: 8080 
+        livenessProbe: 
+          httpGet:
+            path: /maven-web-app 
+            port: 8080
+        redinessProbe: 
+          httpGet:
+            path: /maven-web-app 
+            port: 8080
+
+      - name: log     
+      volumes:
+      - name: mydata 
+      imagePullSecrets:
+      - name: dhcred
+      - name: nexuscred 
+      - name: ecr-cred
+      nodeSelector  
+
+----
+13.59.116.120  
+
+Configure Liveness, Readiness and Startup Probes
+==============================================
+Auto Scaling:
+=========== 
+    kubectl scale deployment/rs/rc --replicas 4  
+
+HPA  - Horizontal po autoscaler    
+VPA  - Vertical pod autoscaler 
+CAS  - Cluster autoscaler
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+spec:
+  containers:
+  - name: myapp
+    image: mylandmarktech/java-web-app
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "256m"        
+      limits:
+        memory: "256Mi"
+        cpu: "1000m"
+    ports:
+      - containerPort: <Port>
+
+ --- PODS and Ports  
+ --- NodePort and nodePort    
+ Ports:
+  containerPort  
+  nodePort  
+  targetPort  
+  port [servicePort]  
+
+
+----
+Kubernetes Metric Server:
+  https://docs.aws.amazon.com/eks/latest/userguide/metrics-server.html
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+# Display node metrics
+$ kubectl top nodes
+
+# Display pod metrics
+$ kubectl top pods
+---
+Kubernetes:
+  Metrics API = gauge 
+  Metric server 
+  kubectl top nodes
+
+Autoscaling in Kubernetes:
+===========================
+POD AutoScaler
+==============
+What is difference b/w Kubernetes AutoScaling(POD AutoScaling) & AWS AutoScaling?
+
+
+POD AutoScaling --> Kuberenets POD AutoScaling Will make sure u have minimum number pod replicas available at any time & based the observed CPU/Memory utilization on pods it can scale PODS.  HPA Will Scale up/down pod replicas of Deployment/ReplicaSet/ReplicationController based on observerd CPU & Memory utilization base the target specified.
+
+
+AWS AutoScaling --> It will make sure u have enough number of nodes(Servers). Always it will maintian minimum number of nodes. Based the observed CPU/Memory utilization of node it can scale nodes.
+
+   Cluster --> Nodes --> Pods 
+
+Note: Deploy metrics server as k8s addon which will fetch metrics. Follow bellow link to deploy metrics Server.
+
+
+
+Horizontal Pod Autoscaler – HPA
+==================================
+In a very simple note Horizontal Scaling means increasing and decreasing the number of Replicas (Pods)
+HPA automatically scales the number of pods in a deployment, replication controller, or replica set, stateful set based on that resource's CPU utilization. 
+This can help our applications scale out to meet increased demand or scale in when resources are not needed, thus freeing up your worker nodes for other applications. 
+When we set a target CPU utilization percentage, the HPA scales our application in or out to try to meet that target.
+HPA needs Kubernetes metrics server to verify CPU metrics of a pod. 
+We do not need to deploy or install the HPA on our cluster to begin scaling our applications, its out of the box available as a default Kubernetes API resource. 
+----------------
+Vertical Pod Autoscaler – VPA 
+===============================
+VPA automatically adjusts the CPU and memory reservations for our pods to help "right size" our applications.
+
+This adjustment can improve cluster resource utilization and free up CPU and memory for other pods. 
+
+Benefits
+Cluster nodes are used efficiently, because Pods use exactly what they need.
+
+Pods are scheduled onto nodes that have the appropriate resources available.
+
+We don't have to run time-consuming benchmarking tasks to determine the correct values for CPU and memory requests.
+
+Maintenance time is reduced, because the autoscaler can adjust CPU and memory requests over time without any action on your part.
+----
+hpa.yml  
+=======
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hpadeployment
+  labels:
+    name: hpadeployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: hpapod
+  template:
+    metadata:
+      labels:
+        name: hpapod
+    spec:
+      containers:
+        - name: hpacontainer
+          image: k8s.gcr.io/hpa-example
+          ports:
+          - name: http
+            containerPort: 80
+          resources:
+            requests:
+              cpu: "32m"
+              memory: "32Mi"
+            limits:
+              cpu: "32m"
+              memory: "64Mi"
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpadeploymentautoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hpadeployment
+  minReplicas: 1
+  maxReplicas: 500
+  metrics:
+    - resource:
+        name: cpu
+        targetAverageUtilization: 40
+      type: Resource
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hpaclusterservice
+  labels:
+    name: hpaservice
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    name: hpapod
+  type: ClusterIP
+
+---
+kubectl top nodes  
+kubectl top pod  
+
+deploy a load load-generator container:
+  =======================
+kubectl run -i --tty load-generator --rm  --image=busybox /bin/sh
+while true; do wget -q -O- http://hpaclusterservice; done
+
+=====================
+NameSpaces  
+ - isolate Environments  
+ - security  
+ - resource allocation = ResourceQuota  
+   dev  
+   qa  
+   prod  
+
+kops  / eks  
+============
+ - 10 worker nodes   
+ - 100GB CPU AND 16GB RAM = 
+Available cluster resources:
+   cpu: 1000GB
+   mem: 160GB 
+   pods: 4000 
+   deploy: 100
+--
+   dev: --- 
+     cpu: 400GB
+     mem: 80Gi  
+     pods: 2000 
+     deploy: 50
+   qa:  
+     cpu: 300GB
+     mem: 40Gi  
+   prod:
+     cpu: 300GB
+     mem: 40Gi 
+---
+
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: pods-medium
+    namespace: dev  
+  spec:
+    hard:
+      cpu: "100Gi"
+      memory: 20Gi
+      pods: "10"
+    scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: "medium"
+---
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: pods-medium
+    namespace: prod  
+  spec:
+    hard:
+      cpu: "100Gi"
+      memory: 20Gi
+      pods: "10"
+    scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: "high"
+
+scopeSelector
+  PriorityClass:
+    ["high"]
+    ["medium"]
+    ["low"]
+
+prod-app   
+   100 pods running  
+qa/test/-app
+   40 pods running 
+dev-app  
+   10 pods running 
+--------
+150 pods 
+=========
+
+node selector
+  kubectl get node --show-labels  
+  kubecl label node key=value   
+  kubectl label node node14 name=webappnode  
+  kubectl label node worker name=dbnode     
+
+kind: Pod
+apiVersion: v1
+metadata: 
+  name: myapp  
+spec:
+  nodeSelector:
+    name: dbnode 
+
+kind: DaemonSet
+metadata:
+  name: logs
+apiVersion: apps/v1 
+spec:
+  selector: 
+    matchLabels:
+      app: logs  
+  template:
+    metadata:
+      name: log  
+      labels:
+        app: log 
+    spec:
+      nodeSelector:
+        name: dbnode  
+      containers:
+      - name
+        image 
+        ports 
+        livenessProbe 
+        redinessProbe
+
+
+
+
+node affinity 
+podAffinity 
+=============   
+
+sudo docker run --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
+
+docker logs container-id 2>&1 | grep "Bootstrap Password:" 
+
+kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{"\n"}}' 
+
+AKIAVA7MDXUT4ZXFMFUR
+ Cj+gLiTHpxKc387bFAcgWI5fXg1xDOgJxybUlHmq 
+=================================================
+
+CLI 
+
+UI   
+
+
+Rancher and kubernetes:
+  PROVIDE A Kubernetes platform  
+  With Rancher we can import and manage multiple kubernetes clusters    
+  We can create clusters like EKS / AKS / GKE, etc.   
+  Rancher provide a provide a  dasborad for kubernetes
+Rancher is deployed using docker  
+  sudo docker run --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
+
+docker logs  container-id  2>&1 | grep "Bootstrap Password:" 
+docker logs  c13e91150c3d  2>&1 | grep "Bootstrap Password:" 
+
+c13e91150c3d
+
+kubectl get secret --namespace cattle-system \
+bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{"\n"}}'
+
+kubectl get namespace "cattle-sytem" -o json \
+  | tr -d "\n" | sed "s/\"finalizers\": \[[^]]\+\]/\"finalizers\": []/" \
+  | kubectl replace --raw /api/v1/namespaces/cattle-system/finalize -f -
+  
+
+
+  https://3.95.166.221
+     username = admin 
+     password = Admin@123class30   
+
+Helm and helm charts  
+====================
+helm in a package manager for kubernetes    
+We can deploy workloads in Kubernetes easily using helm  
+
+YUM / choco / brew / apt / python-pipe  
+
+maven 
+1.  yum install maven  
+2. 
+  wget maven.zip  
+  unzip maven.zip
+  chmod 777 maven    
+  sh /opt/maven/bin/mvn package  
+
+Deployment mongodb:
+  secret  
+  configmap  
+  PersistentVolume
+  persistentVolumeClaim 
+  HPA  
+  SERVICE 
+
+helm create javawebapp    
+
+Install Helm 3
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+ ./get_helm.sh  
+
+helm show values javawebapp  
+helm template javawebapp
+
+GitHub = SCM  
+
+create custom helm charts for application deployment  
+push helm charts into helm repositories  in GitHub pages, helm.io, etc.
+Update existing helm charts into helm repositories 
+Use helm helm charts for easy deployment within the team  
+
+GitHub REPO:
+  https://github.com/LandmakTechnology/helm-app23  
+
+GitHub pages:
+  https://landmaktechnology.github.io/helm-app23/
+
+kubectl get all
+   51  clear
+   52  ls
+   53  vi app.yml
+   54  kubectl get node
+   55  exit
+   56  clear
+   57  helm ls
+   58  helm uninstall app29
+   59  helm repo ls
+   60  helm repo add myapp  https://landmaktechnology.github.io/helm-app23/
+   61  helm uppdate  repo
+   62  helm  repo update
+   63  clear
+   64  helm  repo ls
+   65  helm search repo  myapp
+   66  helm show values myapp/myapp
+   67  helm template myapp/myapp
+   68  helm show values myapp/myapp
+   69  helm show values myapp/myapp  > values.yml
+   70  vi values.yml
+   71  helm install myapp  myapp/myapp -f values.yml
+
+Deploying 3rd party applications using Helm   
+Install Nginx ingress using helm:  
+===============================
+ https://helm.nginx.com/stable
+ helm repo add nginx-ingress https://helm.nginx.com/stable 
+ helm repo update
+ helm search repo nginx-ingress     
+ helm install  nginx    nginx-ingress/nginx-ingress -n nginx  
+
+app.yml = 4 applications
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: myapp
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  replicas: 2
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: mylandmarktech/maven-web-app
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /maven-web-app
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: appsvc
+spec:
+  selector:
+     app: myapp
+  ports:
+  - targetPort: 8080
+    port: 80
+---
+# Complete Manifest Where in single yml we defined Deployment & Service for SpringApp & PVC(with default  StorageClass),ReplicaSet & Service For Mongo.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springappdeployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springapp
+  template:
+    metadata:
+      name: springapppod
+      labels:
+        app: springapp
+    spec:
+      containers:
+      - name: springappcontainer
+        image: mylandmarktech/spring-boot-mongo
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_DB_USERNAME
+          value: devdb
+        - name: MONGO_DB_PASSWORD
+          value: devdb@123
+        - name: MONGO_DB_HOSTNAME
+          value: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springapp
+spec:
+  selector:
+    app: springapp
+  ports:
+  - port: 80
+    targetPort: 8080
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodbpvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 16Gi
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mongodbrs
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+     metadata:
+       name: mongodbpod
+       labels:
+         app: mongodb
+     spec:
+       volumes:
+       - name: pvc
+         persistentVolumeClaim:
+           claimName: mongodbpvc
+       containers:
+       - name: mongodbcontainer
+         image: mongo
+         ports:
+         - containerPort: 27017
+         env:
+         - name: MONGO_INITDB_ROOT_USERNAME
+           value: devdb
+         - name: MONGO_INITDB_ROOT_PASSWORD
+           value: devdb@123
+         volumeMounts:
+         - name: pvc
+           mountPath: /data/db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: javasvc
+spec:
+  type: ClusterIP
+  selector:
+    app: java
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: javaapp
+  labels:
+    app: java
+spec:
+  containers:
+  - name: javaapp
+    image: mylandmarktech/java-web-app
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appsvc
+spec:
+  type: ClusterIP
+  selector:
+    app: fe
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: javaapp22
+  labels:
+    app: fe
+spec:
+  containers:
+  - name: javaapp
+    image: mylandmarktech/maven-web-app
+    ports:
+    - containerPort: 8080
+
+ubuntu@ip-172-20-57-176:~$ kubectl apply -f app
+deployment.apps/springappdeployment created
+service/springapp created
+persistentvolumeclaim/mongodbpvc unchanged
+replicaset.apps/mongodbrs created
+service/mongo created
+service/javasvc created
+pod/javaapp created
+service/appsvc created
+pod/javaapp22 created
+deployment.apps/myapp created
+
+Path-based routing:
+ ideal for microservices
+    dominionapps.net/
+    dominionapps.net/login 
+    dominionapps.net/registration
+    dominionapps.net/account
+    dominionapps.net/transfer
+    dominionapps.net/payBills
+
+Host-based routing:
+  host: dominionapps.net/
+  backend:
+    service: springapp  
+  host: app.dominionapps.net/
+  backend:
+    service: myapp  
+
+
+vi ingress.sh 
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: springapp.dominionapps.net
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: springapp
+            port:
+              number: 80
+  - host: app.dominionapps.net
+    http:
+      paths:
+      - pathType: Prefix
+        path: /maven-web-app
+        backend:
+          service:
+            name: appsvc
+            port:
+              number: 80
+  - host: java.dominionapps.net
+    http:
+      paths:
+      - pathType: Prefix
+        path: /java-web-app
+        backend:
+          service:
+            name: javasvc
+            port:
+
+what happens when we type:  
+  java.dominionapps.net 
+  google.com 
+
+This qwery the global DNS 
+    java.dominionapps.net ---- 
+
+nslookup springapp.dominionapps.net
+
+Non-authoritative answer:
+Name:   springapp.dominionapps.net
+Address: 52.8.189.97
+Name:   springapp.dominionapps.net
+Address: 54.153.19.238
+
+
+https://github.com/LandmakTechnology/kubernetes-notes/tree/master/13-kubernetes-ingress
+
+Rancher  
+Helm  
+Nginx-ingress  
+custom application  
+
+kubernetes security  
+
+2 =336 
+x = 400
+
+
+1 = 336/2  = 
+
+67,000 hours  
+
+  5 year  +  
+
+
+  How can we achieve the transition to microservices??
+   Change request 
+      Monolithic  to microservices   
+   train other colleague 
+---
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-path
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: dominionapps.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: springapp
+            port:
+              number: 80
+      - path: /maven-web-app
+        pathType: Prefix
+        backend:
+          service:
+            name: appsvc
+            port:
+              number: 80
+      - path: /java-web-app
+        pathType: Prefix
+        backend:
+          service:
+            name: javasvc
+            port:
+              number: 80
+
+dominionapps.net:
+google.com
+ what happens
+---
+    ingressLB    svc --- pods
+
+dominionapps.net --- 
+
+  nslookup  dominionapps.net
+
+ [applications]  
+
+    browser cache 
+    ram cache   
+    ISP  - MTN / Rogers / Comcat  
+======================================
+
+monitoring (micro-service) applications with  
+Prometheus and Grafana
+======================================
+deploy prometheus using helm:
+  https://github.com/myLandmakTechnology/prometheus-grafana-ELK-EFK
+kubectl create ns apm
+      https://charts.helm.sh/stable
+  
+  kubectl config set-context <context_name> -- namespace=<ns_name>
+  kubectl config set-context current --namespace=apm 
+  kubectl config set-context --current --ns=dev
+  kubectl config set-context --current --ns=apm
+ 
+helm repo add apm https://charts.helm.sh/stable
+helm repo update
+helm install prometheus apm/prometheus -f prometheus-value.yml -n apm
+kubectl get pod -n apm
+kubectl get all -n apm
+
+deploy grafana using helm:
+helm install grafana  apm/grafana -n apm
+
+
+
+Access Key ID:
+AKIAVA7MDXUTQKZMK3IS
+Secret Access Key:
+ePC63m+v5HelXInbf5g8TXm3izKidlfdZ7P/yXST
+
+kops export kubeconfig $NAME --admin
+
+Sample Dash Board IDS: 3119,7249 8919,6417 ,11074.
+
+
+$ helm repo add elastic https://helm.elastic.co
+
+NOTES:
+1. Watch all containers come up.
+  $ kubectl get pods --namespace=efk -l release=kibana1 -w
+2. Retrieve the elastic user's password.
+  $ kubectl get secrets --namespace=efk elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+3. Retrieve the kibana service account token.
+  $ kubectl get secrets --namespace=efk kibana1-kibana-es-token -ojsonpath='{.data.token}' | base64 -d
+
+Kubernetes:
+  Achitecture:
+    controlPlane [ api-server / etcd / controller managers / scheduler]  
+    workerNodes [kubelet / container runtime / kube-proxy] 
+  Installation:
+    SelfManaged = kubeadm / minikube / docker desktop 
+    Managed [eks / aks / gke]
+    kops [ vpc/ebs/ec2/ELB/IAM/EFS/S3/Route53 /  ]
+  ACCESSING A CLUSTER:
+    cli-kubectl / gui 
+    kubeConfig 
+  NameSpaces:
+     isolation /  security / resource allocation 
+  Objects: 
+    Pods/ReplicationController/ReplicaSet/StatefulSet/Deployment
+    DaemonSet/ComfigMaps/Secrets/ ResourceQuota
+  Service discovery:
+    ClusterIP / NodePort / LoadBalancer / ExternalName  
+  volumes: 
+    PV=80G /PVC=20G / StorageClass[ STATIC / Dynamic ] /  
+  rancher:    
+  helm:
+    files+commands = Declarative approach
+    commands       = imperative approach 
+      kubectl run/expose 
+    IaC: Kubernetes Manifest FILES = yaml / Json  
+    helm: 
+  nginx = kubernetes operator/plugin 
+  Autoscaling = HPA / VPA / CAS  
+  Metric Server = kubernetes operator/plugin
+  Prometheus and Grafana = APM  
+  EFK/ELK - LogMGT and data Analytics
+  CNI 
+  security
+
+manifest = 
+
+deploy.yml
+  1: Deployment / ReplicaSet / SERVICE / configmaps / secrets / ingress / hpa / MS 
+     RBAC: / SeriveAccount / Roles / RoleBinding / ClusterRole / ClusterRoleBinding
+
+  2: Deployment / ReplicaSet / SERVICE / configmaps / secrets / ingress / pv/pvc   
+     RBAC / SeriveAccount / Roles / RoleBinding / ClusterRole / ClusterRoleBinding 
+
+helm create  
+
+Containerised /  dockerrised applications:
+  dockerhub = mylandmarktech/hello  
+Deploy webapp using helm:  
+========================
+helm create webapp
+helm install webapp 
+charts / CLI=helm / repository
+
+use helm to deploy the following applications:
+    nginx-ingress
+    prometheus  
+    grafana  
+    Elastic search  
+    Kibana  
+    filebeat 
+    metricbeat  
+    webapp / javaapp / myapp 
+ 
+ Helm charts is required:
+   imageName:TAG 
+   ports;  
+   serviceType   
+
+helm charts for nginx-ingress 
+   $ helm repo add nginx-ingress https://helm.nginx.com/stable
+   $ helm repo update
+
+nginx-ingress   https://helm.nginx.com/stable
+
+grafana         https://grafana.github.io/helm-charts
+prometheus      https://prometheus-community.github.io/helm-charts
+
+  helm repo add prometheus https://prometheus-community.github.io/helm-charts
+  helm install prometheus prometheus/prometheus
+
+  helm upgrade prometheus  prometheus/prometheus -f prometheus29.yml -n apm  
+
+  helm repo add grafana https://grafana.github.io/helm-charts
+  helm install grafana grafana/grafana 
+
+  prometheus/prometheus 
+
+NOTES:
+1. Get your 'admin' user password by running:
+
+   kubectl get secret --namespace apm grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apmingress
+  namespace: apm  
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: prometheus.dominionapps.net
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: prometheus-server
+            port:
+              number: 80
+  - host: alert.dominionapps.net
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: prometheus-alertmanager
+            port:
+              number: 80
+  - host: grafana.dominionapps.net
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 80
+
+Data sources:
+  prometheus  
+
+Sample Dash Board IDS: 
+  3119,7249, 8919, 6417, 11074.
+
+deploy prometheus using helm:
+  https://github.com/myLandmakTechnology/prometheus-grafana-ELK-EFK
+
+
+pod.yml 
+apiVersion: v1     
+kind: Pod
+metadata: 
+  name: app29  
+  namespace: apm
+spec: 
+  containers:
+  - name: app
+    image:  mylandmarktech/hellos     
+    ports:
+    - containerPort: 8080 
+
+  volumes  
+
+Installation:
+  kubeadm / minikube / docker desktop  
+  kops  
+  eks / aks / iks / gke/ etc  
+Elastic Kubernetes Service (Amazon EKS)
+Fully managed Kubernetes control plane
+Amazon EKS:
+  1. vpc with 2 private subnets and 2 public subnets  
+  2. EBS / EC2 / EFS /  S3 / ELB / ASG / LT/LC 
+  3. RDS / IAM / 
+  4. ECR /   
+  5. Farget profiles -- SERVERLESS SOLUTION     
+
+k8s --> node --> pod -- > containers
+cluster--->
+  Control plane
+  WorkerNodes - nodeGroups
+
+We is required to run applications in Kubernetes:
+  1. We need a functional/healthy kubernetes cluster 
+
+     We need a production grade kubernetes cluster  
+       - Disaster recovery  
+       - Scaling at cluster level  
+       - Dynamic storageclass  
+     kubeadm  
+
+  2. kubernetes Engine installed 
+     car = Engine  
+     Mercedes 1990/2023    -- 
+---
+How to deploy an AMAZON EKS CLUSTER:
+  1. GUI  = aws console 
+  2. CLI  = aws eks create-cluster 
+            eksctl create-cluster 
+  2. IaC with terraform 
+
+Terraform: = It is a tool use to automate the process of    
+             Creating, securing and managing Infrastructures   
+             in any cloud platform using files/code. 
+
+How to implement terraform workloads:              
+  1. init  = initialises a terraform dir and 
+          download providers plugins 
+  
+  2. Create codes terraform scripts [main.tf]  
+  validate = validate all the .tf files 
+  plan     = 
+  apply 
+  apply --auto-approve 
+  destroy  
+  destroy --auto-approve 
+  format
+    all Infrastructures created are stored in the terraform.tfstate  
+  terraform show or 
+  cat terraform.tfstate
+  import  - resources under the mgt of terraform  
+            which were not created by terraform
+
+  modules  -bring
+  variables  
+  outputs [.kube/config]   
+  workspaces
+  terraform.tfstate mgt     
+     locally [5 Engineers]
+        Paul
+           terraform apply  
+        Esther
+           terraform apply 
+     remotely 
+        s3 backend
+        dynamoDB table locks  
+
+  20 VPCs  / 80 ec2-instances
+  4          8    
+
+How many Environments are you managing?? 
+5.      Dev   /    qa /    uat /    pre-prod /   prod  
+  ec2    15        25       30        40         100  
+  vpc    5          5        5         10         25   
+  s3     10        10       15        25          50  
+  eks    1         1        1         1            5  
+
+modules:
+  ec2 / vpc / s3 / eks /   
+
+variables.devtf: 
+variables.qatf: 
+variables.uattf:
+variables.prodtf    
+
+workspaces 
+  default  = production    
+  dev   
+  stage 
+
+gitBranch: 
+  master
+  dev  
+  stage  
+
+======================================
+https://github.com/LandmakTechnology/kubernetes-notes
+git clone https://github.com/LandmakTechnology/kubernetes-notes
+
+/tree/master/eks-setup-with-terraform
+
+12 hours ANSIBLE  = 
+=======================
+
